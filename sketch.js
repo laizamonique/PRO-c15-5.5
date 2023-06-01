@@ -9,7 +9,8 @@ var cloudsGroup, cloudImage;
 var obstaclesGroup, obstacle1, obstacle2, obstacle3, obstacle4, obstacle5, obstacle6;
 
 var score;
-
+var gameOverImg,restartImg;
+var jumpSound , checkPointSound, dieSound;
 
 function preload(){
   trex_running = loadAnimation("trex1.png","trex3.png","trex4.png");
@@ -25,8 +26,12 @@ function preload(){
   obstacle4 = loadImage("obstacle4.png");
   obstacle5 = loadImage("obstacle5.png");
   obstacle6 = loadImage("obstacle6.png");
-  
-}
+  restartImg = loadImage("restart.png");
+  gameOverImg = loadImage("gameOver.png");
+  jumpSound = loadSound("jump.mp3");
+  dieSound = loadSound("die.mp3");
+ checkPointSound = loadSound("checkPoint.mp3");
+} 
 
 function setup() {
   createCanvas(600, 200);
@@ -40,6 +45,14 @@ function setup() {
   ground.addImage("ground",groundImage);
   ground.x = ground.width /2;
   
+  gameOver = createSprite(300,100);
+  gameOver.addImage(gameOverImg);
+  
+  restart = createSprite(300,140);
+  restart.addImage(restartImg);
+  
+  gameOver.scale = 0.5;
+  restart.scale = 0.5;
   
   invisibleGround = createSprite(200,190,400,10);
   invisibleGround.visible = false;
@@ -65,6 +78,8 @@ function draw() {
   
   
   if(gameState === PLAY){
+    gameOver.visible = false;
+    restart.visible = false;
     //mover o chão
     ground.velocityX = -4;
     //pontuação
@@ -94,7 +109,14 @@ function draw() {
   }
    else if (gameState === END) {
       ground.velocityX = 0;
-     
+     gameOver.visible = true;
+    restart.visible = true;
+     trex.velocityY = 0;
+     obstaclesGroup.setVelocityXEach(0);
+     cloudsGroup.setVelocityXEach(0);
+     trex.chargeAnimation("collided", trx_collided);
+     obstaclesGroup.setLifetimeEach(-1);
+     cloudsGroup.setLifetimeEach(-1);
      obstaclesGroup.setVelocityXEach(0);
      cloudsGroup.setVelocityXEach(0);
    }
